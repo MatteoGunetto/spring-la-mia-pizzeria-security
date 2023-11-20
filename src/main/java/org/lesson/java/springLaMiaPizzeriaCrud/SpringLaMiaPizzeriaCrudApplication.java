@@ -2,12 +2,20 @@ package org.lesson.java.springLaMiaPizzeriaCrud;
 
 import org.lesson.java.springLaMiaPizzeriaCrud.DB.Pizze;
 import org.lesson.java.springLaMiaPizzeriaCrud.DB.serv.PizzaService;
-import org.lesson.java.springLaMiaPizzeriaCrud.DB.serv.IngredientService;
 import org.lesson.java.springLaMiaPizzeriaCrud.DB.Ingredient;
+import org.lesson.java.springLaMiaPizzeriaCrud.DB.serv.IngredientService;
+import org.lesson.java.springLaMiaPizzeriaCrud.DB.Role;
+import org.lesson.java.springLaMiaPizzeriaCrud.DB.serv.RoleService;
+import org.lesson.java.springLaMiaPizzeriaCrud.DB.User;
+import org.lesson.java.springLaMiaPizzeriaCrud.DB.serv.UserService;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
@@ -18,10 +26,18 @@ public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 	@Autowired
 	private IngredientService ingredientService;
 
+	@Autowired
+	private RoleService roleService;
+
+	@Autowired
+	private UserService userService;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SpringLaMiaPizzeriaCrudApplication.class, args);
 	}
 
+
+//	ingredient
 	@Override
 	public void run(String... args) throws Exception {
 
@@ -53,7 +69,7 @@ public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 		ingredientService.save(ingr12);
 		ingredientService.save(ingr13);
 
-
+//pizze
 
 		Pizze pizza1 = new Pizze("Margherita", "La pizza Margherita è una pizza classica italiana che è composta da una base di pasta, salsa di pomodoro, mozzarella e basilico. ", "https://upload.wikimedia.org/wikipedia/commons/c/c8/Pizza_Margherita_stu_spivack.jpg", 4.99f);
 
@@ -92,6 +108,23 @@ public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 		pizzaService.save(pizza10);
 		pizzaService.save(pizza11);
 		pizzaService.save(pizza12);
+
+//security
+
+		Role admin = new Role("ADMIN");
+		Role user = new Role("USER");
+
+		roleService.save(admin);
+		roleService.save(user);
+
+		final String pwsAdmin = new BCryptPasswordEncoder().encode("admin");
+		final String pwsUser = new BCryptPasswordEncoder().encode("user");
+
+		User defAdmin = new User("admin", pwsAdmin, admin, user);
+		User defUser = new User("user", pwsUser, user);
+
+		userService.save(defAdmin);
+		userService.save(defUser);
 
 		System.out.println("!!--------!! Seeded the db with success !!--------!!");
 	}

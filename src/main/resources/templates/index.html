@@ -1,9 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 
     <head th:replace="~{frags :: head('Menù')}"></head>
 
     <body class="bg-secondary">
+    <div th:fragment="login" class="d-flex align-items-center gap-2">
+	<span sec:authorize="hasAnyAuthority('USER', 'ADMIN')" class="d-flex align-items-center">
+		<span sec:authentication="name" type="button" class="fw-semibold btn btn-dark rounded-0 border-end-0 text-uppercase"></span>
+
+		<a href="/logout" type="button" class="btn btn-outline-dark rounded-0 text-uppercase bg-danger">logout</a>
+	</span>
+        <span sec:authorize="!hasAnyAuthority('USER', 'ADMIN')">
+		<a href="/login" type="button" class="btn btn-outline-dark rounded-0 text-uppercase bg-info">LOGIN</a>
+	</span>
+    </div>
     <div class="container my-5">
         <div class="row my-3">
             <div class="col-1">
@@ -19,12 +29,12 @@
         </div>
         <div class="row flex-column flex-md-row mb-4">
             <div class="col">
-                <a href="/create" type="button" class="btn btn-outline-dark rounded-0 bg-warning my-2">Creanuova pizza</a>
-                <a href="/ingredients" type="button" class="btn btn-dark rounded-0">Ingredients List</a>
+                <a href="/create" type="button" class="btn btn-outline-dark rounded-0  bg-warning my-2" sec:authorize="hasAuthority('ADMIN')">Crea nuova pizza</a>
+                <a href="/ingredients" type="button" class="btn btn-dark rounded-0" sec:authorize="hasAuthority('ADMIN')">Ingredients List</a>
             </div>
             <div class="col">
                 <form class="d-flex align-items-center my-2">
-                    <input type="text" class="form-control rounded-0" name="name" id="name" aria-describedby="helpId"
+                    <input type="text" class="form-control rounded-0"  name="name" id="name" aria-describedby="helpId"
                            placeholder="Cerca la tua pizza!">
                     <button type="submit" class="btn btn-outline-dark rounded-0 bg-success">Ricerca</button>
                 </form>
@@ -44,9 +54,9 @@
                                 <a type="button" class="btn btn-outline-dark rounded-0 bg-primary"
                                    th:href="@{/{id}(id=${pizza.getId()})}">Dettagli</a>
                                 <a type="button" th:href="@{/update/{id}(id=${pizza.getId()})}"
-                                   class="btn btn-outline-dark rounded-0 bg-warning">Modifica</a>
+                                   class="btn btn-outline-dark rounded-0 bg-warning " sec:authorize="hasAuthority('ADMIN')">Modifica</a>
                                 <form method="POST" th:action="@{/delete/{id}(id=*{id})}"
-                                      onsubmit="return confirm('Sei sicuro di volerla cancellare?')">
+                                      onsubmit="return confirm('Sei sicuro di volerla cancellare?')" sec:authorize="hasAuthority('ADMIN')">
                                     <button type="submit" class="btn btn-outline-dark rounded-0 bg-danger">Eimina</button>
                                 </form>
                             </div>
